@@ -15,8 +15,10 @@ class InfoMessage:
         self.calories = calories
 
     def get_message(self) -> str:
-        message = f'Тип тренировки: {self.training_type}; Длительность: {self.duration:.3f} ч.;' \
-                  f' Дистанция: {self.distance:.3f} км; Ср. скорость: {self.speed:.3f} км/ч;' \
+        message = f'Тип тренировки: {self.training_type};' \
+                  f' Длительность: {self.duration:.3f} ч.;' \
+                  f' Дистанция: {self.distance:.3f} км;' \
+                  f' Ср. скорость: {self.speed:.3f} км/ч;' \
                   f' Потрачено ккал: {self.calories:.3f}.'
         return message
 
@@ -67,7 +69,8 @@ class Running(Training):
         """Получить количество затраченных калорий - бег."""
         coeff_calorie_1 = 18
         coeff_calorie_2 = 20
-        calories = (coeff_calorie_1 * self.get_mean_speed() - coeff_calorie_2) * self.weight / self.M_IN_KM *\
+        calories = (coeff_calorie_1 * self.get_mean_speed()
+                    - coeff_calorie_2) * self.weight / self.M_IN_KM * \
                    (self.duration * self.MIN_IN_HOUR)
         return calories
 
@@ -88,8 +91,9 @@ class SportsWalking(Training):
         """Получить количество затраченных калорий - бег."""
         coeff_calorie_3 = 0.035
         coeff_calorie_4 = 0.029
-        calories = (coeff_calorie_3 * self.weight + (self.get_mean_speed() ** 2 // self.height)
-                    * coeff_calorie_4 * self.weight) * (self.duration * self.MIN_IN_HOUR)
+        calories = (coeff_calorie_3 * self.weight + (self.get_mean_speed()
+                    ** 2 // self.height) * coeff_calorie_4 * self.weight) *\
+                   (self.duration * self.MIN_IN_HOUR)
         return calories
 
 
@@ -111,7 +115,7 @@ class Swimming(Training):
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
-        speed = self.length_pool * self.count_pool / self.M_IN_KM / self.duration
+        speed = self.length_pool*self.count_pool / self.M_IN_KM / self.duration
         return speed
 
     def get_spent_calories(self) -> float:
