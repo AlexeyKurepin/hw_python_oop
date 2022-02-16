@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 class InfoMessage:
     """Информационное сообщение о тренировке."""
 
@@ -15,20 +18,26 @@ class InfoMessage:
         self.calories = calories
 
     def get_message(self) -> str:
-        message = f'Тип тренировки: {self.training_type};' \
-                  f' Длительность: {self.duration:.3f} ч.;' \
-                  f' Дистанция: {self.distance:.3f} км;' \
-                  f' Ср. скорость: {self.speed:.3f} км/ч;' \
-                  f' Потрачено ккал: {self.calories:.3f}.'
+        message = (f'Тип тренировки: {self.training_type};'
+                   f' Длительность: {self.duration:.3f} ч.;'
+                   f' Дистанция: {self.distance:.3f} км;'
+                   f' Ср. скорость: {self.speed:.3f} км/ч;'
+                   f' Потрачено ккал: {self.calories:.3f}.')
         return message
 
 
 class Training:
     """Базовый класс тренировки."""
 
-    LEN_STEP = 0.65
-    M_IN_KM = 1000
-    MIN_IN_HOUR = 60
+    LEN_STEP: float = 0.65
+    M_IN_KM: int = 1000
+    MIN_IN_HOUR: int = 60
+    COEFF_CALORIE_1: int = 18
+    COEFF_CALORIE_2: int = 20
+    COEFF_CALORIE_3: float = 0.035
+    COEFF_CALORIE_4: float = 0.029
+    COEFF_CALORIE_5: float = 1.1
+    COEFF_CALORIE_6: int = 2
 
     def __init__(self,
                  action: int,
@@ -51,7 +60,7 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        pass
+        raise NotImplementedError('Нет метода подсчета каллорий!')
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -67,11 +76,9 @@ class Running(Training):
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий - бег."""
-        coeff_calorie_1 = 18
-        coeff_calorie_2 = 20
-        calories = (coeff_calorie_1 * self.get_mean_speed()
-                    - coeff_calorie_2) * self.weight / self.M_IN_KM * \
-                   (self.duration * self.MIN_IN_HOUR)
+        calories = ((self.COEFF_CALORIE_1 * self.get_mean_speed()
+                     - self.COEFF_CALORIE_2) * self.weight
+                    / self.M_IN_KM * (self.duration * self.MIN_IN_HOUR))
         return calories
 
 
@@ -89,18 +96,17 @@ class SportsWalking(Training):
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий - бег."""
-        coeff_calorie_3 = 0.035
-        coeff_calorie_4 = 0.029
-        calories = (coeff_calorie_3 * self.weight + (self.get_mean_speed()
-                    ** 2 // self.height) * coeff_calorie_4 * self.weight) *\
-                   (self.duration * self.MIN_IN_HOUR)
+        calories = ((self.COEFF_CALORIE_3 * self.weight +
+                    (self.get_mean_speed() ** 2 // self.height)
+                    * self.COEFF_CALORIE_4 * self.weight)
+                    * (self.duration * self.MIN_IN_HOUR))
         return calories
 
 
 class Swimming(Training):
     """Тренировка: плавание."""
 
-    LEN_STEP = 1.38
+    LEN_STEP: float = 1.38
 
     def __init__(self,
                  action,
@@ -115,18 +121,18 @@ class Swimming(Training):
 
     def get_mean_speed(self) -> float:
         """Получить среднюю скорость движения."""
-        speed = \
-            self.length_pool * self.count_pool / self.M_IN_KM / self.duration
+        speed = (self.length_pool * self.count_pool
+                 / self.M_IN_KM / self.duration)
         return speed
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий - бег."""
-        coeff_calorie_1 = 1.1
-        calories = (self.get_mean_speed() + coeff_calorie_1) * 2 * self.weight
+        calories = ((self.get_mean_speed() + self.COEFF_CALORIE_5)
+                    * self.COEFF_CALORIE_6 * self.weight)
         return calories
 
 
-def read_package(workout_type: str, data: list) -> Training:
+def read_package(workout_type: str, data: list[int]) -> Training:
     """Прочитать данные полученные от датчиков."""
     sport_types = {'SWM': Swimming,
                    'RUN': Running,
