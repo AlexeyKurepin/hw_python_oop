@@ -137,8 +137,8 @@ def read_package(workout_type: str, data: list[int]) -> Training:
     sport_types = {'SWM': Swimming,
                    'RUN': Running,
                    'WLK': SportsWalking}
-    sport = sport_types[workout_type]
-    return sport(*data)
+    type_of_training = sport_types[workout_type]
+    return type_of_training(*data)
 
 
 def main(training: Training) -> None:
